@@ -50,3 +50,14 @@ func (s *Stack) Size() int {
 
 	return len(s.Elems)
 }
+
+func (s *Stack) Peek() interface{} {
+	if s.IsEmpty() {
+		return nil
+	}	
+
+	s.Lock.RLock()
+	defer s.Lock.RUnlock()
+
+	return s.Elems[len(s.Elems)-1]
+}
