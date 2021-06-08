@@ -45,5 +45,8 @@ func (q *Queue) IsEmpty() bool {
 }
 
 func (q *Queue) Size() int {
+	q.Lock.RLock()
+	defer q.Lock.RUnlock()
+
 	return len(q.Elems)
 }

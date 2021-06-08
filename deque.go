@@ -87,3 +87,10 @@ func (d *Deque) IsEmpty() bool {
 
 	return len(d.Elems) == 0 
 }
+
+func (d *Deque) Size() int {
+	d.Lock.RLock()
+	defer d.Lock.RUnlock()
+
+	return len(d.Elems)
+}
