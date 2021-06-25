@@ -1,11 +1,15 @@
 package godtype
 
+import (
+	"fmt"
+)
+
 type ListNode struct {
-        Val interface{}
+        Val int
         Next *ListNode
 }
 
-func NewList(l []interface{}) *ListNode {
+func NewList(l []int) *ListNode {
         n := len(l)
 	if n == 0 {
 		return nil
@@ -23,4 +27,16 @@ func NewList(l []interface{}) *ListNode {
         }
 
         return head
+}
+
+func PrintList(node *ListNode) {
+        curr := node
+        for {
+		fmt.Println(curr.Val)
+
+                if curr.Next == nil {
+                        break
+                }
+                curr = curr.Next
+        }
 }
