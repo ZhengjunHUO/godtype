@@ -13,7 +13,7 @@ type ListNode struct {
 func NewList(l interface{}) *ListNode {
 	v := reflect.ValueOf(l)
 	if v.Kind() != reflect.Slice {
-		fmt.Println("Input is not a slice")
+		fmt.Println("Input is not a slice !")
 		return nil	 
 	}
 
@@ -37,13 +37,16 @@ func NewList(l interface{}) *ListNode {
 }
 
 func PrintList(node *ListNode) {
-        curr := node
-        for {
-		fmt.Println(curr.Val)
+	if node != nil {
+	        curr := node
+	        for {
+			fmt.Printf("%v, ", curr.Val)
 
-                if curr.Next == nil {
-                        break
-                }
-                curr = curr.Next
-        }
+	                if curr.Next == nil {
+				fmt.Println()
+	                        break
+	                }
+	                curr = curr.Next
+	        }
+	}
 }
