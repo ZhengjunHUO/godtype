@@ -2,27 +2,34 @@ package godtype
 
 import (
 	"fmt"
+	"reflect"
 )
 
 type ListNode struct {
-        Val int
+        Val interface{}
         Next *ListNode
 }
 
-func NewList(l []int) *ListNode {
-        n := len(l)
+func NewList(l interface{}) *ListNode {
+	v := reflect.ValueOf(l)
+	if v.Kind() != reflect.Slice {
+		fmt.Println("Input is not a slice")
+		return nil	 
+	}
+
+	n := reflect.ValueOf(l).Len()
 	if n == 0 {
 		return nil
 	} 
 
-        head := &ListNode{l[0], nil}
+        head := &ListNode{v.Index(0).Interface(), nil}
         if n == 1 {
                 return head
         }
 
         curr := head
         for i:=1; i<n; i++ {
-                curr.Next = &ListNode{l[i], nil}
+                curr.Next = &ListNode{v.Index(i).Interface(), nil}
                 curr = curr.Next
         }
 
