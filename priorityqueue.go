@@ -10,9 +10,9 @@ import (
 var PopLowest bool
 
 type Elem struct {
-	value		interface{}
-	priority	int
-	index		int
+	Value		interface{}
+	Priority	int
+	Index		int
 }
 
 type PriorityQueue []*Elem
@@ -36,9 +36,9 @@ func InitPQ(values interface{}, prios []int, popLowest bool) PriorityQueue {
 	pq := make(PriorityQueue, n)
 	for i:=0; i<n; i++ {
 		pq[i] = &Elem{
-			value:		v.Index(i).Interface(),
-			priority:	prios[i],
-			index:		i,
+			Value:		v.Index(i).Interface(),
+			Priority:	prios[i],
+			Index:		i,
 		}
 	} 
 	heap.Init(&pq)
@@ -55,24 +55,24 @@ func (pq PriorityQueue) Len() int {
 func (pq PriorityQueue) Less(i, j int) bool {
 	if PopLowest {
 		// Will pop the lowest priority value first
-		return pq[i].priority < pq[j].priority
+		return pq[i].Priority < pq[j].Priority
 	}
 
 	// Will pop the highest priority value first
-	return pq[i].priority > pq[j].priority
+	return pq[i].Priority > pq[j].Priority
 }
 
 // Implement sort interface
 func (pq PriorityQueue) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].index = i
-	pq[j].index = j
+	pq[i].Index = i
+	pq[j].Index = j
 }
 
 // Implement heap interface
 func (pq *PriorityQueue) Push(item interface{}) {
 	elem := item.(*Elem)
-	elem.index = pq.Len()
+	elem.Index = pq.Len()
 	*pq = append(*pq, elem)
 }
 
@@ -91,9 +91,9 @@ func (pq *PriorityQueue) Pop() interface{} {
 // Update priority of element, if elem not exist insert it
 func (pq *PriorityQueue) Update(value interface{}, prio int) {
 	for _, elem := range *pq {
-		if elem.value == value {
-			elem.priority = prio
-			heap.Fix(pq, elem.index)
+		if elem.Value == value {
+			elem.Priority = prio
+			heap.Fix(pq, elem.Index)
 			return
 		}
 	}
@@ -103,19 +103,19 @@ func (pq *PriorityQueue) Update(value interface{}, prio int) {
 
 // Pop
 func (pq *PriorityQueue) Pull() interface{} {
-	return heap.Pop(pq).(*Elem).value
+	return heap.Pop(pq).(*Elem).Value
 }
 
 // Push
 func (pq *PriorityQueue) Insert(value interface{}, prio int) {
 	elem := &Elem{
-		value:		value,
-		priority:	prio,
+		Value:		value,
+		Priority:	prio,
 	}
 	heap.Push(pq, elem)
 }
 
 // Pop without remove elem from PQ
 func (pq *PriorityQueue) Peek() interface{} {
-	return (*pq)[0].value
+	return (*pq)[0].Value
 }
