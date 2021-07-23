@@ -2,12 +2,10 @@ package godtype
 
 import (
 	"container/heap"
+	"sync"
 	"reflect"
 	"fmt"
 )
-
-// Decide how the Less() compare the priority
-var PopLowest bool
 
 type Elem struct {
 	Value		interface{}
@@ -15,12 +13,17 @@ type Elem struct {
 	Index		int
 }
 
-type PriorityQueue []*Elem
+type Heap []*Elem
+
+type PriorityQueue struct {
+	Data		Heap
+	Lock		sync.RWMutex
+	// Decide how the Less() compare the priority
+	PopLowest 	bool
+}
 
 // build a priority queue with a slice of value and a slice of priority
-func InitPQ(values interface{}, prios []int, popLowest bool) PriorityQueue {
-	PopLowest = popLowest
-
+func InitPQ(values interface{}, prios []int, popLowest bool) *PriorityQueue {
 	v := reflect.ValueOf(values)
         if v.Kind() != reflect.Slice {
                 fmt.Println("Input values is not a slice !")
@@ -32,90 +35,142 @@ func InitPQ(values interface{}, prios []int, popLowest bool) PriorityQueue {
                 fmt.Println("Length of values and prios doesn't match !")
                 return nil       
 	}
+	
+	sign := 1
+	if !popLowest {
+		sign = -1
+	}
 
-	pq := make(PriorityQueue, n)
+	data := make(Heap, n)
 	for i:=0; i<n; i++ {
-		pq[i] = &Elem{
+		data[i] = &Elem{
 			Value:		v.Index(i).Interface(),
-			Priority:	prios[i],
+			Priority:	prios[i] * sign,
 			Index:		i,
 		}
 	} 
-	heap.Init(&pq)
+	heap.Init(&data)
 
-	return pq
-}
-
-// Implement sort interface
-func (pq PriorityQueue) Len() int {
-	return len(pq)
-}
-
-// Implement sort interface
-func (pq PriorityQueue) Less(i, j int) bool {
-	if PopLowest {
-		// Will pop the lowest priority value first
-		return pq[i].Priority < pq[j].Priority
+	return &PriorityQueue{
+		Data: data,
+		PopLowest: popLowest,
 	}
-
-	// Will pop the highest priority value first
-	return pq[i].Priority > pq[j].Priority
 }
 
 // Implement sort interface
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].Index = i
-	pq[j].Index = j
+func (h Heap) Len() int {
+	return len(h)
+}
+
+// Implement sort interface
+func (h Heap) Less(i, j int) bool {
+	return h[i].Priority < h[j].Priority
+}
+
+// Implement sort interface
+func (h Heap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+	h[i].Index = i
+	h[j].Index = j
 }
 
 // Implement heap interface
-func (pq *PriorityQueue) Push(item interface{}) {
+func (h *Heap) Push(item interface{}) {
 	elem := item.(*Elem)
-	elem.Index = pq.Len()
-	*pq = append(*pq, elem)
+	elem.Index = h.Len()
+	*h = append(*h, elem)
 }
 
 // Implement heap interface
-func (pq *PriorityQueue) Pop() interface{} {
-	n := pq.Len()
+func (h *Heap) Pop() interface{} {
+	n := h.Len()
 
 	defer func() {
-		(*pq)[n-1] = nil
-		*pq = (*pq)[:n-1]
+		(*h)[n-1] = nil
+		*h = (*h)[:n-1]
 	}()
 
-	return (*pq)[n-1]	
+	return (*h)[n-1]	
 }
 
 // Update priority of element, if elem not exist insert it
 func (pq *PriorityQueue) Update(value interface{}, prio int) {
-	for _, elem := range *pq {
+	pq.Lock.Lock()
+	defer pq.Lock.Unlock()
+
+	for _, elem := range pq.Data {
 		if elem.Value == value {
-			elem.Priority = prio
-			heap.Fix(pq, elem.Index)
+			if pq.PopLowest {
+				elem.Priority = prio
+			}else{
+				elem.Priority = prio * (-1)
+			}
+			heap.Fix(&(pq.Data), elem.Index)
 			return
 		}
 	}
 	
-	pq.Insert(value, prio)
+	pq.Push(value, prio)
 }
 
-// Pop
-func (pq *PriorityQueue) Pull() interface{} {
-	return heap.Pop(pq).(*Elem).Value
+func (pq *PriorityQueue) Pop() interface{} {
+	pq.Lock.Lock()
+	defer pq.Lock.Unlock()
+
+	return heap.Pop(&(pq.Data)).(*Elem).Value
 }
 
-// Push
-func (pq *PriorityQueue) Insert(value interface{}, prio int) {
+func (pq *PriorityQueue) Push(value interface{}, prio int) {
+	pq.Lock.Lock()
+	defer pq.Lock.Unlock()
+
+	sign := 1
+	if !pq.PopLowest {
+		sign = -1
+	}
+
 	elem := &Elem{
 		Value:		value,
-		Priority:	prio,
+		Priority:	prio * sign,
 	}
-	heap.Push(pq, elem)
+	heap.Push(&(pq.Data), elem)
 }
 
 // Pop without remove elem from PQ
 func (pq *PriorityQueue) Peek() interface{} {
-	return (*pq)[0].Value
+	pq.Lock.RLock()
+	defer pq.Lock.RUnlock()
+
+	return pq.Data[0].Value
+}
+
+func main() {
+	//values := []string{"banana", "apple", "pear"}
+	values := []int{500, 404, 1000}
+	prios := []int{3, 2, 4}
+
+	pq := InitPQ(values, prios, true)
+	pq.Push("orange", 1)
+	
+	fmt.Println("Priority queue: ")
+	for _,v := range pq.Data {
+		fmt.Printf("%.2d:%v [index: %v]\n", v.Priority, v.Value, v.Index)
+	}
+	fmt.Println("")
+
+	fmt.Println("Update elem.")
+	pq.Update("orange", 10)
+
+	fmt.Println("Priority queue: ")
+	for _,v := range pq.Data {
+		fmt.Printf("%.2d:%v [index: %v]\n", v.Priority, v.Value, v.Index)
+	}
+	fmt.Println("")
+
+	fmt.Println("Peek: ", pq.Peek())
+
+	fmt.Println("Pop:")
+	for pq.Data.Len() > 0 {
+		fmt.Println(pq.Pop())
+	}
 }
