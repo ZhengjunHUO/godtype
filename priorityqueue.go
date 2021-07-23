@@ -18,7 +18,6 @@ type Heap []*Elem
 type PriorityQueue struct {
 	Data		Heap
 	Lock		sync.RWMutex
-	// Decide how the Less() compare the priority
 	PopLowest 	bool
 }
 
@@ -37,6 +36,10 @@ func InitPQ(values interface{}, prios []int, popLowest bool) *PriorityQueue {
 	}
 	
 	sign := 1
+	/* 
+	  according to Less() the pq will pop the value lowest priority
+	  if we want the opposite behavior, do *(-1)
+	*/
 	if !popLowest {
 		sign = -1
 	}
@@ -142,35 +145,4 @@ func (pq *PriorityQueue) Peek() interface{} {
 	defer pq.Lock.RUnlock()
 
 	return pq.Data[0].Value
-}
-
-func main() {
-	//values := []string{"banana", "apple", "pear"}
-	values := []int{500, 404, 1000}
-	prios := []int{3, 2, 4}
-
-	pq := InitPQ(values, prios, true)
-	pq.Push("orange", 1)
-	
-	fmt.Println("Priority queue: ")
-	for _,v := range pq.Data {
-		fmt.Printf("%.2d:%v [index: %v]\n", v.Priority, v.Value, v.Index)
-	}
-	fmt.Println("")
-
-	fmt.Println("Update elem.")
-	pq.Update("orange", 10)
-
-	fmt.Println("Priority queue: ")
-	for _,v := range pq.Data {
-		fmt.Printf("%.2d:%v [index: %v]\n", v.Priority, v.Value, v.Index)
-	}
-	fmt.Println("")
-
-	fmt.Println("Peek: ", pq.Peek())
-
-	fmt.Println("Pop:")
-	for pq.Data.Len() > 0 {
-		fmt.Println(pq.Pop())
-	}
 }
