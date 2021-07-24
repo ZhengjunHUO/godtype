@@ -22,7 +22,7 @@ type PriorityQueue struct {
 }
 
 // build a priority queue with a slice of value and a slice of priority
-func InitPQ(values interface{}, prios []int, popLowest bool) *PriorityQueue {
+func NewPQ(values interface{}, prios []int, popLowest bool) *PriorityQueue {
 	v := reflect.ValueOf(values)
         if v.Kind() != reflect.Slice {
                 fmt.Println("Input values is not a slice !")
@@ -117,6 +117,10 @@ func (pq *PriorityQueue) Update(value interface{}, prio int) {
 }
 
 func (pq *PriorityQueue) Pop() interface{} {
+	if pq.Data.Len() < 1 {
+		return nil
+	}
+
 	pq.Lock.Lock()
 	defer pq.Lock.Unlock()
 
@@ -141,6 +145,10 @@ func (pq *PriorityQueue) Push(value interface{}, prio int) {
 
 // Pop without remove elem from PQ
 func (pq *PriorityQueue) Peek() interface{} {
+	if pq.Data.Len() < 1 {
+		return nil
+	}
+
 	pq.Lock.RLock()
 	defer pq.Lock.RUnlock()
 
