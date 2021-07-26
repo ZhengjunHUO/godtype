@@ -167,3 +167,7 @@ func (pq *PriorityQueue) Peek() interface{} {
 
 	return pq.Data[0].Value
 }
+
+func (pq *PriorityQueue) Size() int {
+	return pq.Data.Len()
+}
