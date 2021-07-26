@@ -116,6 +116,19 @@ func (pq *PriorityQueue) Update(value interface{}, prio int) {
 	pq.Push(value, prio)
 }
 
+func (pq *PriorityQueue) Remove(value interface{}) interface{} {
+	pq.Lock.Lock()
+	defer pq.Lock.Unlock()
+
+	for _, elem := range pq.Data {
+		if elem.Value == value {
+			return heap.Remove(&(pq.Data), elem.Index)
+		}
+	}
+
+	return nil
+}
+
 func (pq *PriorityQueue) Pop() interface{} {
 	if pq.Data.Len() < 1 {
 		return nil
