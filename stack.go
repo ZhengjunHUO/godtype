@@ -38,6 +38,7 @@ func (s *Stack) Pop() interface{} {
 	n := len(s.Elems)
 
 	defer func(){
+		s.Elems[n-1] = nil
 		s.Elems = s.Elems[:n-1]
 	}() 
 

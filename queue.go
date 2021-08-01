@@ -31,6 +31,7 @@ func (q *Queue) Pop() interface{} {
 	defer q.Lock.Unlock()
 
 	defer func(){
+		q.Elems[0] = nil
 		q.Elems = q.Elems[1:]
 	}()
 	
