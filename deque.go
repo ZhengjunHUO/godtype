@@ -36,6 +36,7 @@ func (d *Deque) PopFirst() interface{} {
 	defer d.Lock.Unlock()
 
 	defer func(){
+		d.Elems[0] = nil
 		d.Elems = d.Elems[1:]
 	}()
 	
@@ -53,6 +54,7 @@ func (d *Deque) PopLast() interface{} {
 	n := len(d.Elems)
 
 	defer func(){
+		d.Elems[n-1] = nil
 		d.Elems = d.Elems[:n-1]
 	}()
 	
