@@ -20,11 +20,11 @@ func NewBTree(elems []interface{}, index int) *TreeNode {
         // 有子节点
 	var l, r *TreeNode
         if 2*index + 1 < len(elems) && elems[2*index+1] != nil {
-		l = NewTree(elems, 2*index+1)
+		l = NewBTree(elems, 2*index+1)
 	}
 	
         if 2*index + 2 < len(elems) && elems[2*index+2] != nil {
-		r = NewTree(elems, 2*index+2)
+		r = NewBTree(elems, 2*index+2)
 	}
 	
 	return &TreeNode{
