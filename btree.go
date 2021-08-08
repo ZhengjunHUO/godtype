@@ -34,20 +34,34 @@ func NewBTree(elems []interface{}, index int) *TreeNode {
         }
 }
 
+var count int
+func printIndent(n int) {
+    for i := 0; i < n; i++ {
+        fmt.Printf("  ")
+    }
+}
+
 func PrintBtree(root *TreeNode) {
 	if root == nil {
 		fmt.Println("Empty tree")
 		return
 	}
 
+	printIndent(count)
 	fmt.Println("Current node's value: ", root.Val)
 	if root.Left !=	nil {
+		printIndent(count)
 		fmt.Printf("%v have a left child\n", root.Val)
+		count++
 		PrintBtree(root.Left)
+		count--
 	}
 	if root.Right != nil {
+		printIndent(count)
 		fmt.Printf("%v have a right child\n", root.Val)
+		count++
 		PrintBtree(root.Right)
+		count--
 	}
 }
 
