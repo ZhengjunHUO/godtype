@@ -12,6 +12,10 @@ type TreeNode struct {
 
 // 从数列(完全二叉树标准)构建树
 func NewBTree(elems []interface{}, index int) *TreeNode {
+	if len(elems) == 0 {
+		return nil
+	}
+
         // 为叶子结点
         if 2*index + 2 >= len(elems) {
 		return &TreeNode{ elems[index], nil, nil, }
@@ -69,6 +73,7 @@ func PrintBtreeBFS(root *TreeNode) {
 	rslt := []interface{}{}
 	if root == nil {
 		fmt.Println(rslt)
+		return
 	}
 
 	q := NewQueue()
