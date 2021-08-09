@@ -17,7 +17,7 @@ func NewBTree(elems []interface{}, index int) *TreeNode {
 	}
 
         // 为叶子结点
-        if 2*index + 2 >= len(elems) {
+        if 2*index + 1 > len(elems) - 1 {
 		return &TreeNode{ elems[index], nil, nil, }
 	}
 
