@@ -11,7 +11,11 @@ type TreeNode struct {
 }
 
 // 从数列(完全二叉树标准)构建树
-func NewBTree(elems []interface{}, index int) *TreeNode {
+func NewBTree(elems []interface{}) *TreeNode {
+	return newBTree(elems, 0)
+}
+
+func newBTree(elems []interface{}, index int) *TreeNode {
 	if len(elems) == 0 {
 		return nil
 	}
@@ -24,11 +28,11 @@ func NewBTree(elems []interface{}, index int) *TreeNode {
         // 有子节点
 	var l, r *TreeNode
         if 2*index + 1 < len(elems) && elems[2*index+1] != nil {
-		l = NewBTree(elems, 2*index+1)
+		l = newBTree(elems, 2*index+1)
 	}
 	
         if 2*index + 2 < len(elems) && elems[2*index+2] != nil {
-		r = NewBTree(elems, 2*index+2)
+		r = newBTree(elems, 2*index+2)
 	}
 	
 	return &TreeNode{
@@ -45,7 +49,7 @@ func printIndent(n int) {
     }
 }
 
-func PrintBtree(root *TreeNode) {
+func PrintBTreeDFS(root *TreeNode) {
 	if root == nil {
 		fmt.Println("Empty tree")
 		return
@@ -57,19 +61,19 @@ func PrintBtree(root *TreeNode) {
 		printIndent(count)
 		fmt.Printf("%v have a left child\n", root.Val)
 		count++
-		PrintBtree(root.Left)
+		PrintBTreeDFS(root.Left)
 		count--
 	}
 	if root.Right != nil {
 		printIndent(count)
 		fmt.Printf("%v have a right child\n", root.Val)
 		count++
-		PrintBtree(root.Right)
+		PrintBTreeDFS(root.Right)
 		count--
 	}
 }
 
-func PrintBtreeBFS(root *TreeNode) {
+func PrintBTreeBFS(root *TreeNode) {
 	rslt := []interface{}{}
 	if root == nil {
 		fmt.Println(rslt)
