@@ -16,7 +16,7 @@ func NewUF(n int) *UF {
 	return &UF{n, parent, size}
 }
 
-func (uf *UF) findRoot(a int) int {
+func (uf *UF) FindRoot(a int) int {
 	for a != uf.parent[a] {
 		uf.parent[a] = uf.parent[uf.parent[a]]
 		a = uf.parent[a]
@@ -27,7 +27,7 @@ func (uf *UF) findRoot(a int) int {
 
 
 func (uf *UF) Union(a, b int) {
-	ar, br := uf.findRoot(a), uf.findRoot(b)
+	ar, br := uf.FindRoot(a), uf.FindRoot(b)
 	if ar == br {
 		return
 	}
@@ -46,7 +46,7 @@ func (uf *UF) Union(a, b int) {
 
 
 func (uf *UF) IsLinked(a, b int) bool {
-	return uf.findRoot(a) == uf.findRoot(b) 
+	return uf.FindRoot(a) == uf.FindRoot(b)
 }
 
 func (uf *UF) Count() int {
