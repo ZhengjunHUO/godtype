@@ -60,3 +60,7 @@ func (uf *UF) Parent() []int {
 func (uf *UF) Size() []int {
 	return uf.size
 }
+
+func (uf *UF) SetCount(c int) {
+	uf.count = c
+}
