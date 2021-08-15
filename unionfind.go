@@ -54,13 +54,25 @@ func (uf *UF) Count() int {
 }
 
 func (uf *UF) Parent() []int {
-	return uf.parent
+	p := make([]int, len(uf.parent))
+	copy(p, uf.parent)
+	return p
 }
 
 func (uf *UF) Size() []int {
-	return uf.size
+	s := make([]int, len(uf.size))
+	copy(s, uf.size)
+	return s
 }
 
 func (uf *UF) SetCount(c int) {
 	uf.count = c
+}
+
+func (uf *UF) SetParent(p []int) {
+	copy(uf.parent, p)
+}
+
+func (uf *UF) SetSize(s []int) {
+	copy(uf.size, s)
 }
