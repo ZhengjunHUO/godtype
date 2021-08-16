@@ -38,6 +38,17 @@ func (q *Queue) Pop() interface{} {
 	return q.Elems[0]
 }
 
+func (q *Queue) Peek() interface{} {
+	if q.IsEmpty() {
+		return nil
+	}
+
+	q.Lock.RLock()
+	defer q.Lock.RUnlock()
+
+	return q.Elems[0]
+}
+
 func (q *Queue) IsEmpty() bool {
 	q.Lock.RLock()
 	defer q.Lock.RUnlock()

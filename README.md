@@ -19,7 +19,7 @@ This is the homemade thread-safe Go data type mentioned in my [leetcode project]
 | insert at end | Push(elem interface{}) | Push(elem interface{}) | PushLast(elem interface{}) |
 | remove from head | - | Pop() interface{} | PopFirst() interface{} |
 | remove from end | Pop() interface{} | - | PopLast() interface{} |
-| check the head | - | - | PeekFirst() interface{} | 
+| check the head | - | Peek() interface{} | PeekFirst() interface{} |
 | check the end | Peek() interface{} | - | PeekLast() interface{} |
 | check is empty | IsEmpty() bool | IsEmpty() bool | IsEmpty() bool |
 | check size | Size() int | Size() int | Size() int |
