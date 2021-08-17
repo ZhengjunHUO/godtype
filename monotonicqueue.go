@@ -24,6 +24,10 @@ func (mq *MonotonicQueue) Push(elem interface{}) {
 		for ! mq.deque.IsEmpty() && mq.deque.PeekLast().(int) < int(v.Int()) {
 			mq.deque.PopLast()
 		}
+	case reflect.Float64:
+		for ! mq.deque.IsEmpty() && mq.deque.PeekLast().(float64) < v.Float() {
+			mq.deque.PopLast()
+		}
 	case reflect.String:
 		for ! mq.deque.IsEmpty() && mq.deque.PeekLast().(string) < v.String() {
 			mq.deque.PopLast()
