@@ -140,6 +140,23 @@ func (pq *PriorityQueue) Pop() interface{} {
 	return heap.Pop(&(pq.Data)).(*Elem).Value
 }
 
+func (pq *PriorityQueue) PopWithPrio() []interface{} {
+        if pq.Data.Len() < 1 {
+                return nil
+        }
+
+        pq.Lock.Lock()
+        defer pq.Lock.Unlock()
+
+	sign := 1
+	if !pq.PopLowest {
+                sign = -1
+        }
+
+	elem := heap.Pop(&(pq.Data)).(*Elem)
+        return []interface{}{elem.Value, elem.Priority * sign}
+}
+
 func (pq *PriorityQueue) Push(value interface{}, prio int) {
 	pq.Lock.Lock()
 	defer pq.Lock.Unlock()
