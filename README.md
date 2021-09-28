@@ -9,7 +9,12 @@ This is the homemade thread-safe Go data type mentioned in my [leetcode project]
   - Stack: godtype.NewStack()
   - Queue: godtype.NewQueue()
   - Deque: godtype.NewDeque()
-  
+  - MonotonicQueue: godtype.NewMonotonicQueue()
+  - PriorityQueue: godtype.NewPQ(values interface{}, prios []int, popLowest bool)
+  - LinkedHashmap: godtype.NewLmap()
+  - UnionFind: godtype.NewUF(n int)
+  - PatternFinder(KMP): godtype.NewPatternFinder(p string)
+
 3. Method:
 
 
