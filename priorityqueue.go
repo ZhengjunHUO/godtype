@@ -9,7 +9,7 @@ import (
 
 type Elem struct {
 	Value		interface{}
-	Priority	int
+	Priority	interface{}
 	Index		int
 }
 
@@ -18,23 +18,30 @@ type Heap []*Elem
 type PriorityQueue struct {
 	Data		Heap
 	Lock		sync.RWMutex
-	PopLowest 	bool
+	PopLowest	bool
 }
 
 // build a priority queue with a slice of value and a slice of priority
-func NewPQ(values interface{}, prios []int, popLowest bool) *PriorityQueue {
+func NewPQ(values interface{}, prios interface{}, popLowest bool) *PriorityQueue {
 	v := reflect.ValueOf(values)
         if v.Kind() != reflect.Slice {
                 fmt.Println("Input values is not a slice !")
-                return nil       
+                return nil
         }
 
-	n := reflect.ValueOf(values).Len()
-	if n != len(prios) {
+	p := reflect.ValueOf(prios)
+        if v.Kind() != reflect.Slice {
+                fmt.Println("Input prios is not a slice !")
+                return nil
+        }
+
+	nv := reflect.ValueOf(values).Len()
+	np := reflect.ValueOf(prios).Len()
+	if nv != np {
                 fmt.Println("Length of values and prios doesn't match !")
-                return nil       
+                return nil
 	}
-	
+
 	sign := 1
 	/* 
 	  according to Less() the pq will pop the value lowest priority
@@ -44,14 +51,21 @@ func NewPQ(values interface{}, prios []int, popLowest bool) *PriorityQueue {
 		sign = -1
 	}
 
-	data := make(Heap, n)
-	for i:=0; i<n; i++ {
+	data := make(Heap, nv)
+	for i:=0; i<nv; i++ {
+		var pr interface{}
+		if p.Index(i).Kind() == reflect.Float64 {
+			pr = p.Index(i).Float() * float64(sign)
+		}else{
+			pr = int(p.Index(i).Int()) * sign
+		}
+
 		data[i] = &Elem{
 			Value:		v.Index(i).Interface(),
-			Priority:	prios[i] * sign,
+			Priority:	pr,
 			Index:		i,
 		}
-	} 
+	}
 	heap.Init(&data)
 
 	return &PriorityQueue{
@@ -67,7 +81,12 @@ func (h Heap) Len() int {
 
 // Implement sort interface
 func (h Heap) Less(i, j int) bool {
-	return h[i].Priority < h[j].Priority
+	v := reflect.ValueOf(h[i].Priority)
+	if v.Kind() == reflect.Float64 {
+		return h[i].Priority.(float64) < h[j].Priority.(float64)
+	}
+
+	return h[i].Priority.(int) < h[j].Priority.(int)
 }
 
 // Implement sort interface
@@ -93,10 +112,11 @@ func (h *Heap) Pop() interface{} {
 		*h = (*h)[:n-1]
 	}()
 
-	return (*h)[n-1]	
+	return (*h)[n-1]
 }
 
 // Update priority of element, if elem not exist insert it
+/*
 func (pq *PriorityQueue) Update(value interface{}, prio int) {
 	pq.Lock.Lock()
 	defer pq.Lock.Unlock()
@@ -115,6 +135,7 @@ func (pq *PriorityQueue) Update(value interface{}, prio int) {
 	
 	pq.Push(value, prio)
 }
+*/
 
 func (pq *PriorityQueue) Remove(value interface{}) interface{} {
 	pq.Lock.Lock()
@@ -154,10 +175,15 @@ func (pq *PriorityQueue) PopWithPrio() []interface{} {
         }
 
 	elem := heap.Pop(&(pq.Data)).(*Elem)
-        return []interface{}{elem.Value, elem.Priority * sign}
+
+        if reflect.ValueOf(elem.Priority).Kind() == reflect.Float64 {
+                return []interface{}{elem.Value, elem.Priority.(float64) * float64(sign)}
+        }
+
+        return []interface{}{elem.Value, elem.Priority.(int) * sign}
 }
 
-func (pq *PriorityQueue) Push(value interface{}, prio int) {
+func (pq *PriorityQueue) Push(value interface{}, prio interface{}) {
 	pq.Lock.Lock()
 	defer pq.Lock.Unlock()
 
@@ -166,9 +192,16 @@ func (pq *PriorityQueue) Push(value interface{}, prio int) {
 		sign = -1
 	}
 
+	var pr interface{}
+	if reflect.ValueOf(prio).Kind() == reflect.Float64 {
+		pr = prio.(float64) * float64(sign)
+	}else{
+		pr = prio.(int) * sign
+	}
+
 	elem := &Elem{
 		Value:		value,
-		Priority:	prio * sign,
+		Priority:	pr,
 	}
 	heap.Push(&(pq.Data), elem)
 }
