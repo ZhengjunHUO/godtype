@@ -3,9 +3,7 @@
 This is the homemade thread-safe Go data type mentioned in my [leetcode project](https://github.com/ZhengjunHUO/leetcode), initally built to solve some leetcode problems and turns out to be quite useful in other places.
 
 ## Usage
-1. \# go get [-u] github.com/ZhengjunHUO/godtype
-
-2. Create a new struct:        
+### Create a new struct:        
   - Stack: godtype.NewStack()
   - Queue: godtype.NewQueue()
   - Deque: godtype.NewDeque()
@@ -15,7 +13,7 @@ This is the homemade thread-safe Go data type mentioned in my [leetcode project]
   - UnionFind: godtype.NewUF(n int)
   - PatternFinder(KMP): godtype.NewPatternFinder(p string)
 
-3. Method:
+### Method:
 
 
 | Operation | [Stack](https://github.com/ZhengjunHUO/godtype/blob/main/stack.go) | [Queue](https://github.com/ZhengjunHUO/godtype/blob/main/queue.go) | [Deque](https://github.com/ZhengjunHUO/godtype/blob/main/deque.go) |
