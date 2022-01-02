@@ -16,16 +16,20 @@ func NewUF(n int) *UF {
 	return &UF{n, parent, size}
 }
 
+/* find current node's root, in the same time reduce tree's height */
 func (uf *UF) FindRoot(a int) int {
 	for a != uf.parent[a] {
-		uf.parent[a] = uf.parent[uf.parent[a]]
+		if uf.parent[a] != uf.parent[uf.parent[a]] {
+			uf.size[uf.parent[a]] -= 1
+			uf.parent[a] = uf.parent[uf.parent[a]]
+		}
 		a = uf.parent[a]
 	}
-	
+
 	return a
 }
 
-
+/* connect two node by joining their roots; Do nothing if they are already connected */
 func (uf *UF) Union(a, b int) {
 	ar, br := uf.FindRoot(a), uf.FindRoot(b)
 	if ar == br {
@@ -39,16 +43,16 @@ func (uf *UF) Union(a, b int) {
 		uf.parent[br] = ar
 		uf.size[ar] += uf.size[br]
 	}
-	
+
 	uf.count--
 }
 
-
-
+/* test if two nodes are already connected */
 func (uf *UF) IsLinked(a, b int) bool {
 	return uf.FindRoot(a) == uf.FindRoot(b)
 }
 
+/* Getters */
 func (uf *UF) Count() int {
 	return uf.count
 }
@@ -65,6 +69,7 @@ func (uf *UF) Size() []int {
 	return s
 }
 
+/* Setters */
 func (uf *UF) SetCount(c int) {
 	uf.count = c
 }
