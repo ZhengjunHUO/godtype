@@ -30,7 +30,7 @@ func NewPQ(values interface{}, prios interface{}, popLowest bool) *PriorityQueue
         }
 
 	p := reflect.ValueOf(prios)
-        if v.Kind() != reflect.Slice {
+        if p.Kind() != reflect.Slice {
                 fmt.Println("Input prios is not a slice !")
                 return nil
         }
