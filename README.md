@@ -2,6 +2,9 @@
 
 This is the homemade thread-safe Go data type mentioned in my [leetcode project](https://github.com/ZhengjunHUO/leetcode), initally built to solve some leetcode problems and turns out to be quite useful in other places.
 
+## DEPRECATED
+Use this [new library](https://github.com/ZhengjunHUO/goutil) instead, built on [Go 1.18 with the supports generics](https://tip.golang.org/doc/go1.18#generics) & 100% test coverage.
+
 ## Usage
 ### Create a new struct:        
   - Stack: godtype.NewStack()
